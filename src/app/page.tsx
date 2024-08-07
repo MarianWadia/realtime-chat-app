@@ -1,5 +1,7 @@
+import { db } from "@/libs/db";
 
-export default function Home() {
+export default async function Home() {
+  // await db.set('hello', 'hello')
   return (
     <main className="flex min-h-screen">
       hello
