@@ -1,11 +1,13 @@
+import { getServerSession } from 'next-auth'
 import { FC } from 'react'
 
-interface pageProps {
+interface HomePageProps {
   
 }
 
-const page: FC<pageProps> = ({}) => {
-  return <div>page</div>
+const HomePage: FC<HomePageProps> = async ({}) => {
+  const session = await getServerSession()
+  return <div>Dashboard</div>
 }
 
-export default page
+export default HomePage
