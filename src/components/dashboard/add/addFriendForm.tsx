@@ -26,22 +26,22 @@ const AddFriendForm: FC<AddFriendFormProps> = ({}) => {
 			});
 			setShowSuccessTrue(true);
 		} catch (error) {
-            setShowSuccessTrue(false);
+			setShowSuccessTrue(false);
 			if (error instanceof ZodError) {
 				setError("email", { message: error.message });
 				return;
 			}
 			if (error instanceof AxiosError) {
-                setError('email', { message: error.response?.data });
+				setError("email", { message: error.response?.data });
 				return;
 			}
-            setError('email', { message: 'Something went wrong.' });
+			setError("email", { message: "Something went wrong." });
 		}
 	}
 
-    const onSubmit = (data: FormData) => {
-        handleAddFriend(data.email);
-    }
+	const onSubmit = (data: FormData) => {
+		handleAddFriend(data.email);
+	};
 
 	return (
 		<form onSubmit={handleSubmit(onSubmit)} className="w-full mt-4">
@@ -61,12 +61,16 @@ const AddFriendForm: FC<AddFriendFormProps> = ({}) => {
 				/>
 				<Button>Add</Button>
 			</div>
-            {showSuccessTrue && (
-                <div className="mt-4 text-green-600 text-sm">Friend request sent successfully!</div>
-            )}
-            {formState.errors.email && (
-                <div className="mt-2 text-red-600 text-sm">{formState.errors.email.message}</div>
-            )}
+			{showSuccessTrue && (
+				<div className="mt-4 text-green-600 text-sm">
+					Friend request sent successfully!
+				</div>
+			)}
+			{formState.errors.email && (
+				<div className="mt-2 text-red-600 text-sm">
+					{formState.errors.email.message}
+				</div>
+			)}
 		</form>
 	);
 };
