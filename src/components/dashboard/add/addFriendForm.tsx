@@ -59,7 +59,7 @@ const AddFriendForm: FC<AddFriendFormProps> = ({}) => {
 					placeholder="you@example.com"
 					className="block py-1.5 rounded-md h-12 w-full text-sm text-gray-900 shadow-sm border-0 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 leading-6 placeholder:text-gray-400 px-2"
 				/>
-				<Button>Add</Button>
+				<Button size='lg'>Add</Button>
 			</div>
 			{showSuccessTrue && (
 				<div className="mt-4 text-green-600 text-sm">

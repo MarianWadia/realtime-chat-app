@@ -1,8 +1,11 @@
 import { User } from './../../types/db.d';
 import { UpstashRedisAdapter } from "@next-auth/upstash-redis-adapter";
-import { NextAuthOptions } from "next-auth";
+import { getServerSession, NextAuthOptions } from "next-auth";
 import { db } from "./db";
 import  GoogleProvider from "next-auth/providers/google"
+import { getSession, useSession } from 'next-auth/react';
+import { useRouter } from 'next/router';
+import { redirect } from 'next/navigation';
 
 function getGoogleCredentials(){
     const clientId = process.env.GOOGLE_CLIENT_ID;
@@ -31,33 +34,40 @@ export const authOptions: NextAuthOptions = {
         })
     ],
     callbacks: {
-        async jwt ({token, user}){
-            const dbUser = (await db.get(`user: ${token.id}`)) as User | null;
-            if(!dbUser){
-                token.id = user!.id;
-                return token
-            }
-            return {
+        async jwt({ token, user }) {
+          // Check if a user is available (typically during sign-in)
+          if (user) {
+            token.id = user.id; // Initialize the token ID
+          } else {
+            // If no user, attempt to retrieve user details from the database using token.id
+            const dbUser = (await db.get(`user:${token.id}`)) as User | null;
+            if (dbUser) {
+              token = {
+                ...token,
                 id: dbUser.id,
                 name: dbUser.name,
                 email: dbUser.email,
                 picture: dbUser.image,
+              };
             }
+          }
+          return token;
         },
-        async session({ session, token}){
-            if(token){
-                session.user = {
-                    id: token.id,
-                    name: token.name,
-                    email: token.email,
-                    image: token.picture
-                }
-                return session
-            }
-            return session
+        async session({ session, token }) {
+          if (token) {
+            // Assign token properties to the session's user object
+            session.user = {
+              id: token.id as string,
+              name: token.name as string,
+              email: token.email as string,
+              image: token.picture as string,
+            };
+          }
+          return session;
         },
-        redirect(){
-            return '/dashboard'
-        }
-    }
+        redirect() {
+          return '/dashboard';
+        },
+      }
+      
 }

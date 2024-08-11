@@ -5,12 +5,19 @@ import React, { useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { signIn } from "next-auth/react";
 import toast from "react-hot-toast";
+import { redirect } from "next/navigation";
 
 export default function LoginPage() {
 	async function loginWithGoogle() {
 		setIsLoading(true);
 		try {
-			await signIn("google");
+			const signInResponse = await signIn("google", {redirect: false});
+			if(signInResponse && !signInResponse?.error){
+				redirect('/dashboard')
+			}else{
+				toast.error('An error occurred while signing in')
+				console.log(signInResponse)
+			}
 		} catch (error) {
             toast.error('Something went wrong')
 		} finally {
