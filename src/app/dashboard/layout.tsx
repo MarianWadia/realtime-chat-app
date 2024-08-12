@@ -1,3 +1,4 @@
+import LogoutButton from "@/components/dashboard/layout/logoutButton";
 import { authOptions } from "@/libs/auth";
 import {
 	BotMessageSquare,
@@ -99,7 +100,7 @@ export default async function Layout({ children }: LayoutProps) {
 								{session.user.email}
 							</p>
 						</div>
-						<LogOut size={22} className="cursor-pointer" />
+						<LogoutButton className="h-full aspect-square" />
 					</div>
 				</div>
 			</div>
