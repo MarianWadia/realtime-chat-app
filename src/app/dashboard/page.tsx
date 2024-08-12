@@ -7,9 +7,7 @@ interface HomePageProps {
 }
 
 const HomePage: FC<HomePageProps> = async ({}) => {
-  const session = await getServerSession(authOptions)
-  console.log(session)
-  return <div>{JSON.stringify(session)}</div>
+  return <div></div>
 }
 
 export default HomePage
