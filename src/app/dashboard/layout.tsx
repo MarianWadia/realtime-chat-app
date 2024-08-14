@@ -1,11 +1,12 @@
+import FriendRequestsItem from "@/components/dashboard/layout/friendRequestsItem";
 import LogoutButton from "@/components/dashboard/layout/logoutButton";
+import { fetchRedis } from "@/helpers/redis";
 import { authOptions } from "@/libs/auth";
 import {
 	BotMessageSquare,
 	Icon,
 	IconNode,
 	LogOut,
-	User,
 	UserPlus,
 } from "lucide-react";
 import { getServerSession } from "next-auth";
@@ -13,6 +14,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ReactElement } from "react";
+import { User } from "../../../types/db";
+import { UserId } from "../../../types/next-auth";
 
 interface LayoutProps {
 	children: React.ReactNode;
@@ -32,17 +35,19 @@ const sidebarOptions: SidebarOption[] = [
 		id: 1,
 		Icon: <UserPlus size="16px" strokeWidth={2} />,
 	},
-	{
-		href: "/dashboard/friend-requests",
-		title: "Friend requests",
-		id: 2,
-		Icon: <User size="16px" strokeWidth={2} />,
-	},
 ];
 
 export default async function Layout({ children }: LayoutProps) {
 	const session = await getServerSession(authOptions);
+	console.log('session', session)
 	if (!session) notFound();
+	const friendRequests = (
+		(await fetchRedis(
+			"smembers",
+			`user:${session.user.id}:incoming_friend_requests`
+		)) as UserId[]
+	).length;
+	console.log('friendRequests', friendRequests)
 	return (
 		<div className="flex flex-row w-full h-screen">
 			<div className="w-full max-w-xs grow h-full  overflow-y-auto flex flex-col gap-y-6 px-4 py-4 border-r border-gray-400 bg-white">
@@ -69,7 +74,7 @@ export default async function Layout({ children }: LayoutProps) {
 						<Link
 							key={option.id}
 							href={option.href}
-							className="w-full text-gray-700 leading-6 flex flex-row items-center gap-3 cursor-pointer hover:bg-gray-100 hover:text-[#159e6e] transition-all py-3 rounded-md hover:bg-opacity-50 px-2 *:hover:text-[#159e6e] *:hover:border-[#159e6e]"
+							className="w-full text-gray-700 leading-6 flex flex-row items-center gap-3 cursor-pointer hover:bg-gray-100 hover:text-primary transition-all py-3 rounded-md hover:bg-opacity-50 px-2 *:hover:text-primary *:hover:border-primary"
 						>
 							<div className="bg-white shrink-0 flex items-center cursor-pointer justify-center h-7 w-7 rounded-lg border border-gray-200">
 								{option.Icon}
@@ -77,26 +82,32 @@ export default async function Layout({ children }: LayoutProps) {
 							<p className="font-semibold truncate">{option.title}</p>
 						</Link>
 					))}
+					<FriendRequestsItem initialFriendRequests={friendRequests} />
 				</div>
 
 				<div className="px-2 flex flex-row w-full gap-x-3 items-center">
 					<div className="relative h-10 w-10 bg-gray-50">
-                        <Image
-                            src={session.user.image as string}
-                            alt="user-image"
-                            fill
-                            className="rounded-full"
-                            referrerPolicy="no-referrer"
-
-                        />
-                    </div>
-                    <span className="sr-only">Your Profile</span>
+						<Image
+							src={session.user.image as string}
+							alt="user-image"
+							fill
+							className="rounded-full"
+							referrerPolicy="no-referrer"
+						/>
+					</div>
+					<span className="sr-only">Your Profile</span>
 					<div className="flex flex-row flex-1 justify-between items-center">
 						<div className="space-y-1">
-							<p aria-hidden={true} className="text-xl text-gray-900 font-semibold capitalize">
+							<p
+								aria-hidden={true}
+								className="text-xl text-gray-900 font-semibold capitalize"
+							>
 								{session.user.name}
 							</p>
-							<p aria-hidden={true} className="text-sm font-medium text-gray-400">
+							<p
+								aria-hidden={true}
+								className="text-sm font-medium text-gray-400"
+							>
 								{session.user.email}
 							</p>
 						</div>
