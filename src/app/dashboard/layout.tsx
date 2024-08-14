@@ -39,7 +39,6 @@ const sidebarOptions: SidebarOption[] = [
 
 export default async function Layout({ children }: LayoutProps) {
 	const session = await getServerSession(authOptions);
-	console.log('session', session)
 	if (!session) notFound();
 	const friendRequests = (
 		(await fetchRedis(
@@ -47,7 +46,6 @@ export default async function Layout({ children }: LayoutProps) {
 			`user:${session.user.id}:incoming_friend_requests`
 		)) as UserId[]
 	).length;
-	console.log('friendRequests', friendRequests)
 	return (
 		<div className="flex flex-row w-full h-screen">
 			<div className="w-full max-w-sm grow h-full  overflow-y-auto flex flex-col gap-y-6 px-4 py-4 border-r border-gray-400 bg-white">
