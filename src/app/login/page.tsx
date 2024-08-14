@@ -11,13 +11,7 @@ export default function LoginPage() {
 	async function loginWithGoogle() {
 		setIsLoading(true);
 		try {
-			const signInResponse = await signIn("google", {redirect: false});
-			if(signInResponse && !signInResponse?.error){
-				redirect('/dashboard')
-			}else{
-				toast.error('An error occurred while signing in')
-				console.log(signInResponse)
-			}
+			await signIn("google");
 		} catch (error) {
             toast.error('Something went wrong')
 		} finally {
