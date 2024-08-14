@@ -50,7 +50,7 @@ export default async function Layout({ children }: LayoutProps) {
 	console.log('friendRequests', friendRequests)
 	return (
 		<div className="flex flex-row w-full h-screen">
-			<div className="w-full max-w-xs grow h-full  overflow-y-auto flex flex-col gap-y-6 px-4 py-4 border-r border-gray-400 bg-white">
+			<div className="w-full max-w-sm grow h-full  overflow-y-auto flex flex-col gap-y-6 px-4 py-4 border-r border-gray-400 bg-white">
 				<Link href="/dashboard" className="shrink-0 px-2">
 					<BotMessageSquare color="#159e6e" size="40px" strokeWidth={2} />
 				</Link>
@@ -86,7 +86,7 @@ export default async function Layout({ children }: LayoutProps) {
 				</div>
 
 				<div className="px-2 flex flex-row w-full gap-x-3 items-center">
-					<div className="relative h-10 w-10 bg-gray-50">
+					<div className="relative h-9 w-9 bg-gray-50">
 						<Image
 							src={session.user.image as string}
 							alt="user-image"
