@@ -63,7 +63,6 @@ export async function POST(req: Request) {
 		if (error instanceof z.ZodError) {
 			// Because we are using zod email validation here at the server as well so if that fails an error of zodError type will be found
 			// statusCode 422 is for Unprocessable Entity; when a request contains valid data that cannot be processed because it fails certain validation rules
-			console.log(error.message);
 			return new Response("Invalid request payload (email)", { status: 422 });
 		}
 		return new Response("Invalid request", { status: 400 });
