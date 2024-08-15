@@ -5,6 +5,7 @@ import Image from "next/image";
 import Button from "@/components/ui/Button";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 interface FriendRequestsProps {
 	incomingFriendRequests: User[];
@@ -18,18 +19,28 @@ const FriendRequests: FC<FriendRequestsProps> = ({
 	const [incomingRequests, setIncomingRequests] = useState(incomingFriendRequests)
 	const router = useRouter()
 	async function acceptFriendRequest(senderId: string){
-		await axios.post('/api/friend/accept', {
-			id: senderId,
-		})
-		setIncomingRequests((prev) => prev.filter(item => item.id !== senderId))
-		router.refresh()
+		try {
+			await axios.post('/api/friend/accept', {
+				id: senderId,
+			})
+			setIncomingRequests((prev) => prev.filter(item => item.id !== senderId))
+			router.refresh()
+			toast.success('Friend request accepted!')
+		} catch (error) {
+			console.log('error', error)
+		}
 	}
 	async function denyFriendRequest(senderId: string){
-		await axios.post('/api/friend/deny', {
-			id: senderId,
-		})
-		setIncomingRequests((prev) => prev.filter(item => item.id !== senderId))
-		router.refresh()
+		try {
+			await axios.post('/api/friend/deny', {
+				id: senderId,
+			})
+			setIncomingRequests((prev) => prev.filter(item => item.id !== senderId))
+			router.refresh()
+			toast.error('Friend denied!')
+		} catch (error) {
+			
+		}
 	}
 	return (
 		<div className="mt-8">

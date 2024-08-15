@@ -1,7 +1,8 @@
 "use client"
 import { User } from 'lucide-react'
 import Link from 'next/link'
-import { FC, useState } from 'react'
+import { usePathname } from 'next/navigation'
+import { FC, useEffect, useState } from 'react'
 
 interface FriendRequestsItemProps {
     initialFriendRequests: number
@@ -13,7 +14,16 @@ const option = {
     Icon: <User size="16px" strokeWidth={2} />,
 }
 const FriendRequestsItem: FC<FriendRequestsItemProps> = ({initialFriendRequests}) => {
-    const [unseenRequestCount, setUnseenRequestCount] = useState<number>(initialFriendRequests)
+    const unseenFriendRequestsFromLocal = Number(localStorage.getItem('unseenFriendRequests'))
+    const [unseenRequestCount, setUnseenRequestCount] = useState<number>(unseenFriendRequestsFromLocal ? unseenFriendRequestsFromLocal : initialFriendRequests)
+    const pathname = usePathname()
+    const isRequestsOpen = pathname.includes('requests')
+    useEffect(()=>{
+        if(isRequestsOpen){
+            setUnseenRequestCount(0) // Reset the count when the requests page is opened. This ensures the count doesn't persist across sessions.
+            localStorage.setItem('unseenFriendRequests', '0') // Store the count in local storage for persistence across sessions.
+        }
+    },[isRequestsOpen])
     return <Link
     key={option.id}
     href={option.href}
