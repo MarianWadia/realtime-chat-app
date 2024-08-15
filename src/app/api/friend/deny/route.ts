@@ -1,21 +1,20 @@
 import { fetchRedis } from "@/helpers/redis";
 import { authOptions } from "@/libs/auth";
+import { db } from "@/libs/db";
 import { getServerSession } from "next-auth";
 import { z } from "zod";
-import { UserId } from "../../../../../types/next-auth";
-import { db } from "@/libs/db";
 
-export async function POST(req: Request) {
-	try {
+export async function POST(req: Request){
+    try {
 		const body = await req.json();
-		const { id: idToAdd } = z.object({ id: z.string() }).parse(body);
+		const { id: idToDeny } = z.object({ id: z.string() }).parse(body);
 		const session = await getServerSession(authOptions);
 		console.log("session", session);
 		if (!session) return new Response("Unauthorized", { status: 401 });
 		const isAlreadyFriend = (await fetchRedis(
 			"sismember",
 			`user:${session.user.id}:friends`,
-			idToAdd
+			idToDeny
 		)) as Boolean;
 		if (isAlreadyFriend) {
 			return new Response("You are already friend with this user", {
@@ -25,17 +24,17 @@ export async function POST(req: Request) {
 		const hasFriendRequest = await fetchRedis(
 			"sismember",
 			`user:${session.user.id}:incoming_friend_requests`,
-			idToAdd
+			idToDeny
 		);
 		if (!hasFriendRequest) {
 			return new Response("No friend request has been sent before", {
 				status: 400,
 			});
 		}
-		await db.sadd(`user:${session.user.id}:friends`, idToAdd);
-		await db.sadd(`user:${idToAdd}:friends`, session.user.id);
-		await db.srem(`user:${session.user.id}:incoming_friend_requests`, idToAdd);
-		return new Response("Friend added successfully", { status: 200 });
+		// await db.sadd(`user:${session.user.id}:friends`, idToDeny);
+		// await db.sadd(`user:${idToDeny}:friends`, session.user.id);
+		await db.srem(`user:${session.user.id}:incoming_friend_requests`, idToDeny);
+		return new Response("Friend request denied successfully", { status: 200 });
 	} catch (error) {
 		if (error instanceof z.ZodError) {
 			return new Response("Invalid request payload", { status: 422 });
