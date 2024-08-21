@@ -14,7 +14,10 @@ const option = {
     Icon: <User size="16px" strokeWidth={2} />,
 }
 const FriendRequestsItem: FC<FriendRequestsItemProps> = ({initialFriendRequests}) => {
-    const unseenFriendRequestsFromLocal = Number(localStorage.getItem('unseenFriendRequests'))
+    let unseenFriendRequestsFromLocal;
+    if(typeof window !== "undefined"){
+        unseenFriendRequestsFromLocal = Number(localStorage.getItem('unseenFriendRequests'))
+    }
     const [unseenRequestCount, setUnseenRequestCount] = useState<number>(unseenFriendRequestsFromLocal ? unseenFriendRequestsFromLocal : initialFriendRequests)
     const pathname = usePathname()
     const isRequestsOpen = pathname.includes('requests')
