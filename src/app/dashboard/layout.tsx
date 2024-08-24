@@ -83,7 +83,7 @@ export default async function Layout({ children }: LayoutProps) {
 							<p className="font-semibold truncate">{option.title}</p>
 						</Link>
 					))}
-					<FriendRequestsItem initialFriendRequests={friendRequests} />
+					<FriendRequestsItem sessionId={(session.user.id) as string} initialFriendRequests={friendRequests} />
 				</div>
 
 				<div className="px-2 flex flex-row w-full gap-x-3 items-center">

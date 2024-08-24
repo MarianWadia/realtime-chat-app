@@ -1,11 +1,13 @@
-"use client"
-import { FC, useState } from "react";
+"use client";
+import { FC, useEffect, useState } from "react";
 import { User } from "../../../../types/db";
 import Image from "next/image";
 import Button from "@/components/ui/Button";
 import axios from "axios";
-import { useRouter } from "next/navigation";
+import { notFound, useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import { pusherClient } from "@/libs/pusher";
+import { toPusherChannel } from "@/libs/utils";
 
 interface FriendRequestsProps {
 	incomingFriendRequests: User[];
@@ -14,34 +16,59 @@ interface FriendRequestsProps {
 
 const FriendRequests: FC<FriendRequestsProps> = ({
 	incomingFriendRequests,
-	sessionId
+	sessionId,
 }) => {
-	const [incomingRequests, setIncomingRequests] = useState(incomingFriendRequests)
-	const router = useRouter()
-	async function acceptFriendRequest(senderId: string){
+	const [incomingRequests, setIncomingRequests] = useState(
+		incomingFriendRequests
+	);
+	const router = useRouter();
+	async function acceptFriendRequest(senderId: string) {
 		try {
-			await axios.post('/api/friend/accept', {
+			await axios.post("/api/friend/accept", {
 				id: senderId,
-			})
-			setIncomingRequests((prev) => prev.filter(item => item.id !== senderId))
-			router.refresh()
-			toast.success('Friend request accepted!')
+			});
+			setIncomingRequests((prev) =>
+				prev.filter((item) => item.id !== senderId)
+			);
+			router.refresh();
+			toast.success("Friend request accepted!");
 		} catch (error) {
-			console.log('error', error)
+			console.log("error", error);
 		}
 	}
-	async function denyFriendRequest(senderId: string){
+	async function denyFriendRequest(senderId: string) {
 		try {
-			await axios.post('/api/friend/deny', {
+			await axios.post("/api/friend/deny", {
 				id: senderId,
-			})
-			setIncomingRequests((prev) => prev.filter(item => item.id !== senderId))
-			router.refresh()
-			toast.error('Friend denied!')
+			});
+			setIncomingRequests((prev) =>
+				prev.filter((item) => item.id !== senderId)
+			);
+			router.refresh();
+			toast.success("Friend denied successfully!");
 		} catch (error) {
-			
+			notFound();
 		}
 	}
+	useEffect(() => {
+		pusherClient.subscribe(
+			toPusherChannel(`user:${sessionId}:incoming_friend_requests`)
+		);
+		const handleFriendRequest = ({
+			name, email, image, id
+		}: User) => {
+			console.log("new Friend request");
+			setIncomingRequests((prev) => ([...prev, { name, email, image, id }]));
+		};
+		console.log("pusher subscribed");
+		pusherClient.bind("incoming_friend_requests", handleFriendRequest);
+		return () => {
+			pusherClient.unsubscribe(
+				toPusherChannel(`user:${sessionId}:incoming_friend_requests`)
+			);
+			pusherClient.unbind("incoming_friend_requests", handleFriendRequest);
+		};
+	}, []);
 	return (
 		<div className="mt-8">
 			{incomingRequests.length === 0 ? (
@@ -65,8 +92,20 @@ const FriendRequests: FC<FriendRequestsProps> = ({
 							</div>
 						</div>
 						<div className="flex flex-row gap-4">
-							<Button onClick={()=>acceptFriendRequest(req.id)} aria-label="accept-friend" className="bg-primary transition-colors hover:bg-green-800">Accept</Button>
-							<Button onClick={()=>denyFriendRequest(req.id)} aria-label="decline-friend" className="bg-red-600 transition-colors hover:bg-red-800">Decline</Button>
+							<Button
+								onClick={() => acceptFriendRequest(req.id)}
+								aria-label="accept-friend"
+								className="bg-primary transition-colors hover:bg-green-800"
+							>
+								Accept
+							</Button>
+							<Button
+								onClick={() => denyFriendRequest(req.id)}
+								aria-label="decline-friend"
+								className="bg-red-600 transition-colors hover:bg-red-800"
+							>
+								Decline
+							</Button>
 						</div>
 					</div>
 				))

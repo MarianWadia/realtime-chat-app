@@ -9,3 +9,7 @@ export function chatIdConstructor(id1: string, id2:string){
     const sortedIds = [id1, id2].sort();
     return sortedIds.join("--");
 }
+
+export function toPusherChannel(key: string){
+    return key.replaceAll(":", "__")
+}
