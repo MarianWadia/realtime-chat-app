@@ -16,6 +16,9 @@ import { notFound } from "next/navigation";
 import { ReactElement } from "react";
 import { User } from "../../../types/db";
 import { UserId } from "../../../types/next-auth";
+import { db } from "@/libs/db";
+import { getFriendsById } from "@/helpers/getFriendsByUserId";
+import SidebarChats from "@/components/dashboard/layout/sidebarChats";
 
 interface LayoutProps {
 	children: React.ReactNode;
@@ -46,6 +49,8 @@ export default async function Layout({ children }: LayoutProps) {
 			`user:${session.user.id}:incoming_friend_requests`
 		)) as UserId[]
 	).length;
+	const friendsData = await getFriendsById(session.user.id)
+	console.log("friendsData", friendsData);
 	return (
 		<div className="flex flex-row w-full h-screen">
 			<div className="w-full max-w-sm grow h-full  overflow-y-auto flex flex-col gap-y-6 px-4 py-4 border-r border-gray-400 bg-white">
@@ -53,16 +58,14 @@ export default async function Layout({ children }: LayoutProps) {
 					<BotMessageSquare color="#159e6e" size="40px" strokeWidth={2} />
 				</Link>
 
-				<div className="flex max-h-[400px] h-fit overflow-y-auto flex-col gap-5 px-2">
-					<p className="text-xs font-semibold leading-6 text-gray-400">
-						Your chats
-					</p>
-					<nav className="text-sm text-black flex flex-col h-full">
-						<ul role="list" className="flex flex-col h-full gap-y-7">
-							<li>{`// chats this user has will be here`}</li>
-						</ul>
-					</nav>
-				</div>
+				{friendsData.length > 0 && (
+					<div className="flex max-h-[400px] h-fit overflow-y-auto flex-col gap-5 px-2">
+						<p className="text-xs font-semibold leading-6 text-gray-400">
+							Your chats
+						</p>
+						<SidebarChats currentUserId={session.user.id} friendsData={friendsData} />
+					</div>
+				)}
 
 				<div className="flex-grow flex flex-col">
 					<p className="text-xs font-semibold leading-6 text-gray-400 px-2">
@@ -84,7 +87,7 @@ export default async function Layout({ children }: LayoutProps) {
 				</div>
 
 				<div className="px-2 flex flex-row w-full gap-x-3 items-center">
-					<div className="relative h-9 w-9 bg-gray-50">
+					<div className="relative h-11 w-11 bg-gray-50">
 						<Image
 							src={session.user.image as string}
 							alt="user-image"
