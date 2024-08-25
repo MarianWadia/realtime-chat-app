@@ -44,6 +44,7 @@ async function getChatInitialMessages(chatId: string) {
 }
 
 const ChatPage: FC<ChatPageProps> = async ({ params }) => {
+	await new Promise((resolve)=>setTimeout(resolve,5000))
 	const session = await getServerSession(authOptions);
 	console.log(session);
 	const { chatId } = params;
