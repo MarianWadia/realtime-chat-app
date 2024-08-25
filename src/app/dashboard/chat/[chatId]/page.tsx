@@ -28,15 +28,11 @@ async function getChatInitialMessages(chatId: string) {
 			0,
 			-1
 		)) as string[];
-		console.log(results);
 		const dbMessages: Message[] = results.map(
 			(message) => JSON.parse(message) as Message
 		);
-		console.log(dbMessages);
 		const reversedDbMessages = dbMessages.reverse();
-		console.log(reversedDbMessages);
 		const messages = messageArrayValidator.parse(reversedDbMessages);
-		console.log(messages);
 		return messages;
 	} catch (error) {
 		console.log("error", error);
@@ -46,19 +42,14 @@ async function getChatInitialMessages(chatId: string) {
 const ChatPage: FC<ChatPageProps> = async ({ params }) => {
 	await new Promise((resolve)=>setTimeout(resolve,5000))
 	const session = await getServerSession(authOptions);
-	console.log(session);
 	const { chatId } = params;
 	if (!session) notFound();
 	const [userId1, userId2] = chatId.split("--");
-	console.log("userId1", userId1);
-	console.log("userId2", userId2);
 	if (userId1 !== session.user.id && userId2 !== session.user.id) {
 		notFound();
 	}
 	const chatPartnerId = userId1 === session.user.id ? userId2 : userId1;
-	console.log("chatPartnerId", chatPartnerId);
 	const chatPartnerData = (await db.get(`user:${chatPartnerId}`)) as User;
-	console.log("chatPartnerData", chatPartnerData);
 	const initialMessages = await getChatInitialMessages(chatId);
 	return (
 		<div className="w-full h-full flex flex-1 justify-between flex-col py-12 px-8">

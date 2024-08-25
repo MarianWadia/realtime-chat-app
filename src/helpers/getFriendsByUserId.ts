@@ -8,7 +8,6 @@ export async function getFriendsById(currentUserId: string) {
 		"smembers",
 		`user:${currentUserId}:friends`
 	)) as UserId[];
-	console.log("actualFriendsIds", actualFriendsIds);
 	// the promise.all here is used to fetch friendData by its id and because we fetch more than one time each friend at a time we used promise.all to fetch all of them at the same time
 	const friendsData = await Promise.all(
 		actualFriendsIds.map(async (friendId) => {

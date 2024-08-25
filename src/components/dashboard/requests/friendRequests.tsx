@@ -57,10 +57,8 @@ const FriendRequests: FC<FriendRequestsProps> = ({
 		const handleFriendRequest = ({
 			name, email, image, id
 		}: User) => {
-			console.log("new Friend request");
 			setIncomingRequests((prev) => [...prev, { name, email, image, id }]);
 		};
-		console.log("pusher subscribed");
 		pusherClient.bind("incoming_friend_requests", handleFriendRequest);
 		return () => {
 			pusherClient.unsubscribe(

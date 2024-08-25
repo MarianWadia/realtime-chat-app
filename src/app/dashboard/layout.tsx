@@ -50,7 +50,6 @@ export default async function Layout({ children }: LayoutProps) {
 		)) as UserId[]
 	).length;
 	const friendsData = await getFriendsById(session.user.id)
-	console.log("friendsData", friendsData);
 	return (
 		<div className="flex flex-row w-full h-screen">
 			<div className="w-full max-w-sm grow h-full  overflow-y-auto flex flex-col gap-y-6 px-4 py-4 border-r border-gray-400 bg-white">

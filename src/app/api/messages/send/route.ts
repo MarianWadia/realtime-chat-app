@@ -36,7 +36,6 @@ export async function POST(req: Request) {
 			"incoming_messages",
 			message
 		);
-		console.log(message);
 		pusherServer.trigger(toPusherChannel(`user:${friendId}:chats`), 'new_message', {
 			...message,
 			senderName: session.user.name,

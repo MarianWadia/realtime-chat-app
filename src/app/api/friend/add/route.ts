@@ -53,7 +53,6 @@ export async function POST(req: Request) {
 				status: 400,
 			});
 		}
-		console.log('pusher trigger')
 		// The User who is logged in will be added in the list of incoming friend requests of the user needed to be added
 		pusherServer.trigger(
 			toPusherChannel(`user:${userIdToBeAdded}:incoming_friend_requests`),
