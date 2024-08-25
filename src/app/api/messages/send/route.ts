@@ -4,6 +4,8 @@ import { db } from "@/libs/db";
 import { Message, messageValidator } from "@/libs/validations/message";
 import { getServerSession } from "next-auth";
 import { nanoid } from "nanoid";
+import { pusherServer } from "@/libs/pusher";
+import { toPusherChannel } from "@/libs/utils";
 export async function POST(req: Request) {
 	try {
 		const { text, chatId }: { text: string; chatId: string } = await req.json();
@@ -29,6 +31,18 @@ export async function POST(req: Request) {
 			text,
 		};
 		const message = messageValidator.parse(messageData);
+		pusherServer.trigger(
+			toPusherChannel(`chat:${chatId}`),
+			"incoming_messages",
+			message
+		);
+		console.log(message);
+		pusherServer.trigger(toPusherChannel(`user:${friendId}:chats`), 'new_message', {
+			...message,
+			senderName: session.user.name,
+			senderEmail: session.user.email,
+			senderImage: session.user.image
+		});
 		await db.zadd(`chat:${chatId}:messages`, {
 			score: timestamp,
 			member: JSON.stringify(message),

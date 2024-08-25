@@ -1,14 +1,16 @@
 "use client";
-import { cn } from "@/libs/utils";
+import { cn, toPusherChannel } from "@/libs/utils";
 import { Message } from "@/libs/validations/message";
-import { FC, useRef, useState } from "react";
+import { FC, useEffect, useRef, useState } from "react";
 import { format } from "date-fns";
 import Image from "next/image";
+import { pusherClient } from "@/libs/pusher";
 interface MessagesProps {
 	initialMessages: Message[] | [];
 	sessionId: string;
 	sessionImg: string;
 	chatPartnerImg: string;
+	chatId: string;
 }
 
 const Messages: FC<MessagesProps> = ({
@@ -16,13 +18,26 @@ const Messages: FC<MessagesProps> = ({
 	sessionId,
 	chatPartnerImg,
 	sessionImg,
+	chatId,
 }) => {
 	const scrollDownRef = useRef<HTMLDivElement | null>(null);
 	const [messages, setMessages] = useState<Message[]>(initialMessages);
 	console.log(initialMessages);
 	function formatDate(timestamp: number) {
-		return format(timestamp, "dd/MM HH:mm aa");
+		return format(timestamp, "dd/MM hh:mm aa");
 	}
+	useEffect(() => {
+		pusherClient.subscribe(toPusherChannel(`chat:${chatId}`));
+		const handleMessages = (message: Message) => {
+			setMessages((prev) => [message, ...prev]);
+		};
+		console.log("pusher subscribed");
+		pusherClient.bind("incoming_messages", handleMessages);
+		return () => {
+			pusherClient.unsubscribe(toPusherChannel(`chat:${chatId}`));
+			pusherClient.unbind("incoming_messages", handleMessages);
+		};
+	}, []);
 	return (
 		<div
 			id="messages"
@@ -74,7 +89,10 @@ const Messages: FC<MessagesProps> = ({
 								})}
 							>
 								<Image
-									src={isCurrentUser ? (sessionImg as string) : chatPartnerImg} alt={isCurrentUser ? 'your profile image' : 'your friend image'}
+									src={isCurrentUser ? (sessionImg as string) : chatPartnerImg}
+									alt={
+										isCurrentUser ? "your profile image" : "your friend image"
+									}
 									fill
 									referrerPolicy="no-referrer"
 									className="rounded-full"
