@@ -4,6 +4,8 @@ import { getServerSession } from "next-auth";
 import { z } from "zod";
 import { UserId } from "../../../../../types/next-auth";
 import { db } from "@/libs/db";
+import { pusherServer } from "@/libs/pusher";
+import { toPusherChannel } from "@/libs/utils";
 
 export async function POST(req: Request) {
 	try {
@@ -32,6 +34,9 @@ export async function POST(req: Request) {
 				status: 400,
 			});
 		}
+		pusherServer.trigger(toPusherChannel(`user:${session.user.id}:friends`), 'new_friend', {
+			idToAdd
+		})
 		await db.sadd(`user:${session.user.id}:friends`, idToAdd);
 		await db.sadd(`user:${idToAdd}:friends`, session.user.id);
 		await db.srem(`user:${session.user.id}:incoming_friend_requests`, idToAdd);

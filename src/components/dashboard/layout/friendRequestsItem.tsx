@@ -20,23 +20,18 @@ const FriendRequestsItem: FC<FriendRequestsItemProps> = ({
 	initialFriendRequests,
 	sessionId,
 }) => {
-	let unseenFriendRequestsFromLocal: number = 0;
-	if (typeof window !== "undefined") {
-		unseenFriendRequestsFromLocal = Number(
-			localStorage.getItem("unseenFriendRequests")
-		);
-	}
-	const [unseenRequestCount, setUnseenRequestCount] = useState<number>(
-		unseenFriendRequestsFromLocal
-			? unseenFriendRequestsFromLocal
-			: initialFriendRequests
-	);
+	// let unseenFriendRequestsFromLocal: number = 0;
+	// if (typeof window !== "undefined") {
+	// 	unseenFriendRequestsFromLocal = Number(
+	// 		localStorage.getItem("unseenFriendRequests")
+	// 	);
+	// }
+	const [unseenRequestCount, setUnseenRequestCount] = useState<number>(initialFriendRequests);
 	const pathname = usePathname();
 	const isRequestsOpen = pathname.includes("requests");
 	useEffect(() => {
 		if (isRequestsOpen) {
 			setUnseenRequestCount(0); // Reset the count when the requests page is opened. This ensures the count doesn't persist across sessions.
-			localStorage.setItem("unseenFriendRequests", "0"); // Store the count in local storage for persistence across sessions.
 		}
 	}, [isRequestsOpen]);
 	useEffect(() => {
@@ -45,8 +40,6 @@ const FriendRequestsItem: FC<FriendRequestsItemProps> = ({
 		);
 		const handleFriendRequest = () => {
 			setUnseenRequestCount((prev) => prev + 1);
-            const unseenReqForLocal = unseenFriendRequestsFromLocal + 1
-			localStorage.setItem("unseenFriendRequests", unseenReqForLocal.toString())
 		};
 		console.log("pusher subscribed");
 		pusherClient.bind("incoming_friend_requests", handleFriendRequest);

@@ -24,7 +24,7 @@ const Messages: FC<MessagesProps> = ({
 	const [messages, setMessages] = useState<Message[]>(initialMessages);
 	console.log(initialMessages);
 	function formatDate(timestamp: number) {
-		return format(timestamp, "dd/MM HH:mm aa");
+		return format(timestamp, "dd/MM hh:mm aa");
 	}
 	useEffect(() => {
 		pusherClient.subscribe(toPusherChannel(`chat:${chatId}`));

@@ -1,15 +1,26 @@
 "use client";
 import Image from "next/image";
 import { FC, useEffect, useState } from "react";
-import { Message, User } from "../../../../types/db";
+import { User } from "../../../../types/db";
 import { UserId } from "../../../../types/next-auth";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { chatIdConstructor } from "@/libs/utils";
+import { chatIdConstructor, toPusherChannel } from "@/libs/utils";
+import { pusherClient } from "@/libs/pusher";
+import toast from "react-hot-toast";
+import UnseenMessageToast from "@/components/ui/unseenMessageToast";
+import { Message } from "@/libs/validations/message";
 
 interface SidebarChatsProps {
 	friendsData: User[];
 	currentUserId: UserId;
+}
+
+
+export interface extendedMessage extends Message {
+	senderName: string;
+	senderImage: string;
+	senderEmail: string;
 }
 
 const SidebarChats: FC<SidebarChatsProps> = ({
@@ -26,6 +37,33 @@ const SidebarChats: FC<SidebarChatsProps> = ({
 			);
 		}
 	}, [pathname]);
+
+	useEffect(() => {
+		pusherClient.subscribe(toPusherChannel(`user:${currentUserId}:chats`));
+		pusherClient.subscribe(toPusherChannel(`user:${currentUserId}:friends`));
+		const newMessageHandler = (message: extendedMessage) => {
+			console.log("new message received", message);
+			const shouldNotify = pathname !== `/dashboard/chat/${chatIdConstructor(currentUserId, message.senderId)}`
+			if(!shouldNotify) return;
+			toast.custom((t)=>(
+				<UnseenMessageToast t={t} message={message} sessionId={currentUserId} />
+			))
+			setUnseenMessages((prev)=>[...prev, message])
+		};
+		const newFriendHandler = () => {
+			router.refresh();
+		};
+		pusherClient.bind("new_message", newMessageHandler);
+		pusherClient.bind("new_friend", newFriendHandler);
+		return () => {
+			pusherClient.unsubscribe(toPusherChannel(`user:${currentUserId}:chats`));
+			pusherClient.unsubscribe(
+				toPusherChannel(`user:${currentUserId}:friends`)
+			);
+			pusherClient.unbind("new_message", newMessageHandler);
+			pusherClient.unbind("new_friend", newFriendHandler);
+		};
+	}, [pathname, currentUserId, router]);
 	return (
 		<nav className="text-sm text-black flex flex-col h-full">
 			<ul role="list" className="flex flex-col h-full gap-y-1">
@@ -54,11 +92,13 @@ const SidebarChats: FC<SidebarChatsProps> = ({
 								<p className="font-semibold truncate capitalize text-base">
 									{friend.name}
 								</p>
-                                {unseenMessagesCount > 0 && (
-                                    <span className="h-7 w-7 bg-primary text-white rounded-full flex items-center justify-center">
-                                        <p className="text-white font-medium text-xs">{unseenMessagesCount}</p>
-                                    </span>
-                                )}
+								{unseenMessagesCount > 0 && (
+									<span className="h-7 w-7 bg-primary text-white rounded-full flex items-center justify-center">
+										<p className="text-white font-medium text-xs">
+											{unseenMessagesCount}
+										</p>
+									</span>
+								)}
 							</a>
 						</li>
 					);
