@@ -49,7 +49,7 @@ const FriendRequestsItem: FC<FriendRequestsItemProps> = ({
 			);
 			pusherClient.unbind("incoming_friend_requests", handleFriendRequest);
 		};
-	}, []);
+	}, [sessionId]);
 	return (
 		<Link
 			key={option.id}
