@@ -5,11 +5,7 @@ import { chatIdConstructor } from "@/libs/utils";
 import { getServerSession } from "next-auth";
 import { notFound } from "next/navigation";
 import { FC } from "react";
-// import RecentChats from "@/components/dashboard/recentChats";
 import { Message } from "../../../types/db";
-import Image from "next/image";
-import Link from "next/link";
-import { ChevronRight } from "lucide-react";
 import RecentChats from "@/components/dashboard/recentChats";
 
 interface HomePageProps {}
@@ -26,6 +22,9 @@ const HomePage: FC<HomePageProps> = async ({}) => {
 				-1,
 				-1
 			)) as string[];
+			if(!lastMessage){
+				return null
+			}
 			const messageData = JSON.parse(lastMessage) as Message;
 			return {
 				...friend,
@@ -33,14 +32,16 @@ const HomePage: FC<HomePageProps> = async ({}) => {
 			};
 		})
 	);
-	console.log("friendsWithLastMessage", friendsWithLastMessage);
+	const recentChats = friendsWithLastMessage.filter(
+		(friend): friend is { id: string; email: string; name: string; image: string; messageData: Message } => friend !== null
+	  );
 	return (
-		<main className="sm:max-w-sm md:max-w-2xl">
+		<main className="sm:max-w-sm md:max-w-2xl 2xl:max-w-3xl">
 			<div className="mx-4 md:mx-12 my-24 flex flex-col">
 				<h1 className="text-5xl font-extrabold text-gray-800">Recent Chats</h1>
 				<RecentChats
 					sessionId={session.user.id}
-					friendsWithLastMessage={friendsWithLastMessage}
+					friendsWithLastMessage={recentChats}
 				/>
 			</div>
 		</main>
