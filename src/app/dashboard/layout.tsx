@@ -37,7 +37,7 @@ export default async function Layout({ children }: LayoutProps) {
 	).length;
 	const friendsData = await getFriendsById(session.user.id);
 	return (
-		<div className="flex flex-row w-full h-screen relative">
+		<div className="flex flex-row w-screen overflow-x-hidden h-screen overflow-y-hidden relative">
 			<div className="md:hidden">
 				<MobileChatLayout
 					friendsData={friendsData}
@@ -46,7 +46,7 @@ export default async function Layout({ children }: LayoutProps) {
 					sidebarOptions={sidebarOptions}
 				/>
 			</div>
-			<div className="hidden md:flex w-full max-w-sm grow h-full overflow-y-auto flex-col gap-y-6 px-4 py-4 border-r border-gray-400 bg-white">
+			<div className="hidden md:flex w-full md:max-w-xs xl:max-w-sm grow h-full overflow-y-auto flex-col gap-y-6 px-4 py-4 border-r border-gray-400 bg-white">
 				<Link href="/dashboard" className="shrink-0 px-2">
 					<BotMessageSquare color="#159e6e" size="40px" strokeWidth={2} />
 				</Link>
@@ -86,7 +86,7 @@ export default async function Layout({ children }: LayoutProps) {
 				</div>
 
 				<div className="px-2 flex flex-row w-full gap-x-3 items-center">
-					<div className="relative h-11 w-11 bg-gray-50">
+					<div className="relative w-8 h-8 xl:h-11 xl:w-11 bg-gray-50">
 						<Image
 							src={session.user.image as string}
 							alt="user-image"
@@ -100,13 +100,13 @@ export default async function Layout({ children }: LayoutProps) {
 						<div className="space-y-1">
 							<p
 								aria-hidden={true}
-								className="text-xl text-gray-900 font-semibold capitalize"
+								className="text-base xl:text-xl text-gray-900 font-semibold capitalize"
 							>
 								{session.user.name}
 							</p>
 							<p
 								aria-hidden={true}
-								className="text-sm font-medium text-gray-400"
+								className="text-xs font-medium text-gray-400 truncate"
 							>
 								{session.user.email}
 							</p>

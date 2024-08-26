@@ -42,6 +42,21 @@ export async function POST(req: Request) {
 				status: 400,
 			});
 		}
+		if (requestIsSent) {
+			return new Response("You have already sent friend request to this user", {
+				status: 400,
+			});
+		}
+		const requestFromThatUserReceived = (await fetchRedis(
+			"sismember",
+			`user:${session.user.id}:incoming_friend_requests`,
+			userIdToBeAdded
+		)) as 0 | 1;
+		if(requestFromThatUserReceived){
+			return new Response("You have already received a friend request from this user", {
+                status: 400,
+            });
+		}
 		const isAlreadyFriends = (await fetchRedis(
 			"sismember",
 			`user:${session.user.id}:friends`,
@@ -54,14 +69,14 @@ export async function POST(req: Request) {
 			});
 		}
 		// The User who is logged in will be added in the list of incoming friend requests of the user needed to be added
-		pusherServer.trigger(
+		await pusherServer.trigger(
 			toPusherChannel(`user:${userIdToBeAdded}:incoming_friend_requests`),
 			"incoming_friend_requests",
 			{
 				id: session.user.id,
 				email: session.user.email,
 				image: session.user.image,
-				name: session.user.name
+				name: session.user.name,
 			}
 		);
 		db.sadd(
