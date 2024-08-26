@@ -1,5 +1,4 @@
 import { authOptions } from "@/libs/auth";
-import { db } from "@/libs/db";
 import { getServerSession } from "next-auth";
 import { notFound } from "next/navigation";
 import { FC } from "react";
@@ -49,7 +48,8 @@ const ChatPage: FC<ChatPageProps> = async ({ params }) => {
 		notFound();
 	}
 	const chatPartnerId = userId1 === session.user.id ? userId2 : userId1;
-	const chatPartnerData = (await db.get(`user:${chatPartnerId}`)) as User;
+	const chatPartnerRaw = (await fetchRedis('get', `user:${chatPartnerId}`)) as string
+	const chatPartnerData = JSON.parse(chatPartnerRaw) as User;
 	const initialMessages = await getChatInitialMessages(chatId);
 	return (
 		<div className="w-full h-full flex flex-1 justify-between flex-col py-12 px-8">
