@@ -12,7 +12,7 @@ interface RecentChatsProps {
 		email: string;
 		name: string;
 		image: string;
-		messageData: Message;
+		messageData: Message | null;
 	}[];
 	sessionId: string;
 }
@@ -22,7 +22,7 @@ const RecentChats: FC<RecentChatsProps> = ({
 	sessionId,
 }) => {
 	return (
-		<div className="mt-8 w-full">
+		<div className="mt-8 w-full flex flex-col gap-y-4">
 			{friendsWithLastMessage.length === 0 ? (
 				<p className="text-zinc-500 text-sm">Nothing to show here...</p>
 			) : (
@@ -53,12 +53,12 @@ const RecentChats: FC<RecentChatsProps> = ({
 								</p>
 								<p className="text-xs text-gray-500 mt-1">
 									<span className="capitalize">
-										{sessionId === friend.messageData.senderId
+										{sessionId === (friend.messageData as Message).senderId
 											? "You"
 											: friend.name}
 									</span>
 									{": "}
-									{friend.messageData.text}
+									{(friend.messageData as Message).text}
 								</p>
 							</div>
 						</Link>

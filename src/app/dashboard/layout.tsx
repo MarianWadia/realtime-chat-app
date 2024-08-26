@@ -4,9 +4,6 @@ import { fetchRedis } from "@/helpers/redis";
 import { authOptions } from "@/libs/auth";
 import {
 	BotMessageSquare,
-	Icon,
-	IconNode,
-	LogOut,
 	UserPlus,
 } from "lucide-react";
 import { getServerSession } from "next-auth";
@@ -14,9 +11,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ReactElement } from "react";
-import { User } from "../../../types/db";
 import { UserId } from "../../../types/next-auth";
-import { db } from "@/libs/db";
 import { getFriendsById } from "@/helpers/getFriendsByUserId";
 import SidebarChats from "@/components/dashboard/layout/sidebarChats";
 
@@ -53,9 +48,9 @@ export default async function Layout({ children }: LayoutProps) {
 	return (
 		<div className="flex flex-row w-full h-screen">
 			<div className="w-full max-w-sm grow h-full  overflow-y-auto flex flex-col gap-y-6 px-4 py-4 border-r border-gray-400 bg-white">
-				<Link href="/dashboard" className="shrink-0 px-2">
+				<a href="/dashboard" className="shrink-0 px-2">
 					<BotMessageSquare color="#159e6e" size="40px" strokeWidth={2} />
-				</Link>
+				</a>
 
 				{friendsData.length > 0 && (
 					<div className="flex max-h-[400px] h-fit overflow-y-auto flex-col gap-5 px-2">
