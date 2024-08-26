@@ -36,9 +36,9 @@ const HomePage: FC<HomePageProps> = async ({}) => {
 		(friend): friend is { id: string; email: string; name: string; image: string; messageData: Message } => friend !== null
 	  );
 	return (
-		<main className="sm:max-w-sm md:max-w-2xl 2xl:max-w-3xl">
-			<div className="mx-4 md:mx-12 my-24 flex flex-col">
-				<h1 className="text-5xl font-extrabold text-gray-800">Recent Chats</h1>
+		<main className="max-w-sm md:max-w-2xl 2xl:max-w-3xl">
+			<div className="mx-6 md:mx-12 my-32 md:my-24 flex flex-col">
+				<h1 className="text-3xl md:text-5xl font-extrabold text-gray-800">Recent Chats</h1>
 				<RecentChats
 					sessionId={session.user.id}
 					friendsWithLastMessage={recentChats}

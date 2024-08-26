@@ -53,8 +53,8 @@ const ChatPage: FC<ChatPageProps> = async ({ params }) => {
 	const initialMessages = await getChatInitialMessages(chatId);
 	return (
 		<div className="w-full h-full flex flex-1 justify-between flex-col py-12 px-8">
-			<div className="w-full flex flex-row border-b-[1px] border-b-gray-200 gap-4 pb-4">
-				<div className="relative h-8 w-8 md:h-12 md:w-12">
+			<div className="w-full flex flex-row border-b-[1px] border-b-gray-200 gap-4 pb-4 mt-10 md:mt-0">
+				<div className="relative h-10 w-10 md:h-12 md:w-12">
 					<Image
 						src={chatPartnerData.image}
 						fill

@@ -30,9 +30,9 @@ const RequestsPage: FC<RequestsPage> = async ({}) => {
 	);
 
 	return (
-		<main className="sm:max-w-sm md:max-w-xl">
-			<div className="mx-4 md:mx-12 my-24 flex flex-col">
-				<h1 className="text-5xl font-extrabold text-gray-800">
+		<main className="max-w-sm md:max-w-2xl 2xl:max-w-3xl">
+			<div className="mx-6 md:mx-12 my-32 md:my-24 flex flex-col">
+				<h1 className="text-4xl md:text-5xl font-extrabold text-gray-800">
 					Friend Requests
 				</h1>
 				<FriendRequests
