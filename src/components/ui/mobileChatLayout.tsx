@@ -54,7 +54,7 @@ const MobileChatLayout: FC<MobileChatLayoutProps> = ({
 					Menu <Menu size="20px" />
 				</Button>
 			</div>
-			<Dialog open={open} onClose={setOpen} className="relative z-10">
+			<Dialog open={open} onClose={setOpen} className="flex md:hidden relative z-10">
 				<DialogBackdrop
 					transition
 					className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity duration-500 ease-in-out data-[closed]:opacity-0"
