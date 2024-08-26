@@ -42,7 +42,6 @@ const SidebarChats: FC<SidebarChatsProps> = ({
 		pusherClient.subscribe(toPusherChannel(`user:${currentUserId}:chats`));
 		pusherClient.subscribe(toPusherChannel(`user:${currentUserId}:friends`));
 		const newMessageHandler = (message: extendedMessage) => {
-			console.log("new message received", message);
 			const shouldNotify = pathname !== `/dashboard/chat/${chatIdConstructor(currentUserId, message.senderId)}`
 			if(!shouldNotify) return;
 			toast.custom((t)=>(

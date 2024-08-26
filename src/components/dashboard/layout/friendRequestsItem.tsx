@@ -41,7 +41,6 @@ const FriendRequestsItem: FC<FriendRequestsItemProps> = ({
 		const handleFriendRequest = () => {
 			setUnseenRequestCount((prev) => prev + 1);
 		};
-		console.log("pusher subscribed");
 		pusherClient.bind("incoming_friend_requests", handleFriendRequest);
 		return () => {
 			pusherClient.unsubscribe(
@@ -49,7 +48,7 @@ const FriendRequestsItem: FC<FriendRequestsItemProps> = ({
 			);
 			pusherClient.unbind("incoming_friend_requests", handleFriendRequest);
 		};
-	}, []);
+	}, [sessionId]);
 	return (
 		<Link
 			key={option.id}

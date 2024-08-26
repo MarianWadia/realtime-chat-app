@@ -11,7 +11,6 @@ interface UnseenMessageToastProps {
 }
 
 const UnseenMessageToast: FC<UnseenMessageToastProps> = ({ message, t, sessionId}) => {
-  console.log('message', message)
 	return (
 		<div
 			className={cn(

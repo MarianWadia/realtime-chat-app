@@ -22,7 +22,6 @@ const Messages: FC<MessagesProps> = ({
 }) => {
 	const scrollDownRef = useRef<HTMLDivElement | null>(null);
 	const [messages, setMessages] = useState<Message[]>(initialMessages);
-	console.log(initialMessages);
 	function formatDate(timestamp: number) {
 		return format(timestamp, "dd/MM hh:mm aa");
 	}
@@ -31,13 +30,12 @@ const Messages: FC<MessagesProps> = ({
 		const handleMessages = (message: Message) => {
 			setMessages((prev) => [message, ...prev]);
 		};
-		console.log("pusher subscribed");
 		pusherClient.bind("incoming_messages", handleMessages);
 		return () => {
 			pusherClient.unsubscribe(toPusherChannel(`chat:${chatId}`));
 			pusherClient.unbind("incoming_messages", handleMessages);
 		};
-	}, []);
+	}, [chatId]);
 	return (
 		<div
 			id="messages"

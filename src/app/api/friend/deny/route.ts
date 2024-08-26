@@ -9,7 +9,6 @@ export async function POST(req: Request){
 		const body = await req.json();
 		const { id: idToDeny } = z.object({ id: z.string() }).parse(body);
 		const session = await getServerSession(authOptions);
-		console.log("session", session);
 		if (!session) return new Response("Unauthorized", { status: 401 });
 		const isAlreadyFriend = (await fetchRedis(
 			"sismember",

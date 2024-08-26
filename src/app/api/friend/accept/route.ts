@@ -12,7 +12,6 @@ export async function POST(req: Request) {
 		const body = await req.json();
 		const { id: idToAdd } = z.object({ id: z.string() }).parse(body);
 		const session = await getServerSession(authOptions);
-		console.log("session", session);
 		if (!session) return new Response("Unauthorized", { status: 401 });
 		const isAlreadyFriend = (await fetchRedis(
 			"sismember",
@@ -34,9 +33,7 @@ export async function POST(req: Request) {
 				status: 400,
 			});
 		}
-		pusherServer.trigger(toPusherChannel(`user:${session.user.id}:friends`), 'new_friend', {
-			idToAdd
-		})
+		pusherServer.trigger(toPusherChannel(`user:${idToAdd}:friends`), 'new_friend', {})
 		await db.sadd(`user:${session.user.id}:friends`, idToAdd);
 		await db.sadd(`user:${idToAdd}:friends`, session.user.id);
 		await db.srem(`user:${session.user.id}:incoming_friend_requests`, idToAdd);

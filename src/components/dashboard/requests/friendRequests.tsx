@@ -57,10 +57,8 @@ const FriendRequests: FC<FriendRequestsProps> = ({
 		const handleFriendRequest = ({
 			name, email, image, id
 		}: User) => {
-			console.log("new Friend request");
 			setIncomingRequests((prev) => [...prev, { name, email, image, id }]);
 		};
-		console.log("pusher subscribed");
 		pusherClient.bind("incoming_friend_requests", handleFriendRequest);
 		return () => {
 			pusherClient.unsubscribe(
@@ -68,7 +66,7 @@ const FriendRequests: FC<FriendRequestsProps> = ({
 			);
 			pusherClient.unbind("incoming_friend_requests", handleFriendRequest);
 		};
-	}, []);
+	}, [sessionId]);
 	return (
 		<div className="mt-8">
 			{incomingRequests.length === 0 ? (
