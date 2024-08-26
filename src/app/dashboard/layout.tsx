@@ -2,10 +2,7 @@ import FriendRequestsItem from "@/components/dashboard/layout/friendRequestsItem
 import LogoutButton from "@/components/dashboard/layout/logoutButton";
 import { fetchRedis } from "@/helpers/redis";
 import { authOptions } from "@/libs/auth";
-import {
-	BotMessageSquare,
-	UserPlus,
-} from "lucide-react";
+import { BotMessageSquare, UserPlus } from "lucide-react";
 import { getServerSession } from "next-auth";
 import Image from "next/image";
 import Link from "next/link";
@@ -14,17 +11,11 @@ import { ReactElement } from "react";
 import { UserId } from "../../../types/next-auth";
 import { getFriendsById } from "@/helpers/getFriendsByUserId";
 import SidebarChats from "@/components/dashboard/layout/sidebarChats";
+import MobileChatLayout from "@/components/ui/mobileChatLayout";
 
 interface LayoutProps {
 	children: React.ReactNode;
 }
-
-type SidebarOption = {
-	href: string;
-	title: string;
-	id: number;
-	Icon: ReactElement;
-};
 
 const sidebarOptions: SidebarOption[] = [
 	{
@@ -44,20 +35,31 @@ export default async function Layout({ children }: LayoutProps) {
 			`user:${session.user.id}:incoming_friend_requests`
 		)) as UserId[]
 	).length;
-	const friendsData = await getFriendsById(session.user.id)
+	const friendsData = await getFriendsById(session.user.id);
 	return (
-		<div className="flex flex-row w-full h-screen">
-			<div className="w-full max-w-sm grow h-full  overflow-y-auto flex flex-col gap-y-6 px-4 py-4 border-r border-gray-400 bg-white">
-				<a href="/dashboard" className="shrink-0 px-2">
+		<div className="flex flex-row w-full h-screen relative">
+			<div className="md:hidden">
+				<MobileChatLayout
+					friendsData={friendsData}
+					session={session}
+					friendRequests={friendRequests}
+					sidebarOptions={sidebarOptions}
+				/>
+			</div>
+			<div className="hidden md:flex w-full max-w-sm grow h-full overflow-y-auto flex-col gap-y-6 px-4 py-4 border-r border-gray-400 bg-white">
+				<Link href="/dashboard" className="shrink-0 px-2">
 					<BotMessageSquare color="#159e6e" size="40px" strokeWidth={2} />
-				</a>
+				</Link>
 
 				{friendsData.length > 0 && (
 					<div className="flex max-h-[400px] h-fit overflow-y-auto flex-col gap-5 px-2">
 						<p className="text-xs font-semibold leading-6 text-gray-400">
 							Your chats
 						</p>
-						<SidebarChats currentUserId={session.user.id} friendsData={friendsData} />
+						<SidebarChats
+							currentUserId={session.user.id}
+							friendsData={friendsData}
+						/>
 					</div>
 				)}
 
@@ -77,7 +79,10 @@ export default async function Layout({ children }: LayoutProps) {
 							<p className="font-semibold truncate">{option.title}</p>
 						</Link>
 					))}
-					<FriendRequestsItem sessionId={(session.user.id) as string} initialFriendRequests={friendRequests} />
+					<FriendRequestsItem
+						sessionId={session.user.id as string}
+						initialFriendRequests={friendRequests}
+					/>
 				</div>
 
 				<div className="px-2 flex flex-row w-full gap-x-3 items-center">
