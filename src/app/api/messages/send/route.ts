@@ -31,12 +31,12 @@ export async function POST(req: Request) {
 			text,
 		};
 		const message = messageValidator.parse(messageData);
-		pusherServer.trigger(
+		await pusherServer.trigger(
 			toPusherChannel(`chat:${chatId}`),
 			"incoming_messages",
 			message
 		);
-		pusherServer.trigger(toPusherChannel(`user:${friendId}:chats`), 'new_message', {
+		await pusherServer.trigger(toPusherChannel(`user:${friendId}:chats`), 'new_message', {
 			...message,
 			senderName: session.user.name,
 			senderEmail: session.user.email,

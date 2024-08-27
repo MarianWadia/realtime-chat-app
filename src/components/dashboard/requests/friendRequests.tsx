@@ -8,6 +8,7 @@ import { notFound, useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { pusherClient } from "@/libs/pusher";
 import { toPusherChannel } from "@/libs/utils";
+import { Check, X } from "lucide-react";
 
 interface FriendRequestsProps {
 	incomingFriendRequests: User[];
@@ -89,7 +90,7 @@ const FriendRequests: FC<FriendRequestsProps> = ({
 								<p className="text-xs text-gray-500">{req.email}</p>
 							</div>
 						</div>
-						<div className="flex flex-row gap-4">
+						<div className="hidden xl:flex flex-row gap-4">
 							<Button
 								onClick={() => acceptFriendRequest(req.id)}
 								aria-label="accept-friend"
@@ -104,6 +105,22 @@ const FriendRequests: FC<FriendRequestsProps> = ({
 							>
 								Decline
 							</Button>
+						</div>
+						<div className="flex xl:hidden flex-row gap-4">
+							<button
+								onClick={() => acceptFriendRequest(req.id)}
+								aria-label="accept-friend"
+								className="bg-primary w-8 h-8 transition-colors hover:bg-green-800 rounded-full flex items-center justify-center"
+							>
+								<Check className='font-semibold text-white w-3/4 h-3/4' />
+							</button>
+							<button
+								onClick={() => denyFriendRequest(req.id)}
+								aria-label="decline-friend"
+								className="bg-red-600 w-8 h-8 transition-colors hover:bg-red-800 rounded-full flex items-center justify-center"
+							>
+								<X className='font-semibold text-white w-3/4 h-3/4' />
+							</button>
 						</div>
 					</div>
 				))

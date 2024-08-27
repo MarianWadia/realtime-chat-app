@@ -6,6 +6,7 @@ import  GoogleProvider from "next-auth/providers/google"
 import { getSession, useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import { redirect } from 'next/navigation';
+import { fetchRedis } from '@/helpers/redis';
 
 function getGoogleCredentials(){
     const clientId = process.env.GOOGLE_CLIENT_ID;
@@ -40,7 +41,8 @@ export const authOptions: NextAuthOptions = {
             token.id = user.id; // Initialize the token ID
           } else {
             // If no user, attempt to retrieve user details from the database using token.id
-            const dbUser = (await db.get(`user:${token.id}`)) as User | null;
+            const dbUserRaw = (await fetchRedis('get', `user:${token.id}`)) as string | null;
+            const dbUser = await JSON.parse(dbUserRaw as string) as User;
             if (dbUser) {
               token = {
                 ...token,

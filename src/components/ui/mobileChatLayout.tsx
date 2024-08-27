@@ -33,28 +33,29 @@ const MobileChatLayout: FC<MobileChatLayoutProps> = ({
 	sidebarOptions,
 }) => {
 	const [open, setOpen] = useState(true);
-    const pathname = usePathname()
-    const [originalPathname, setOriginalPathname] = useState(pathname)
-    useEffect(()=>{
-        if(originalPathname !== pathname){
-            setOpen(false)
-            setOriginalPathname(pathname)
-        }
-    },[pathname, originalPathname])
-    return (
+	const pathname = usePathname();
+	const [originalPathname, setOriginalPathname] = useState(pathname);
+	useEffect(() => {
+		if (originalPathname !== pathname) {
+			setOpen(false);
+			setOriginalPathname(pathname);
+		}
+	}, [pathname, originalPathname]);
+	return (
 		<div className="absolute top-0 w-full bg-zinc-50 border-b border-zinc-200 py-2 px-4">
 			<div className="w-full flex items-center justify-between w-max-sm">
-				<Link
-					href="/dashboard"
-					className="shrink-0"
-				>
+				<Link href="/dashboard" className="shrink-0">
 					<BotMessageSquare color="#159e6e" size="40px" strokeWidth={2} />
 				</Link>
 				<Button className="gap-4" onClick={() => setOpen(!open)}>
 					Menu <Menu size="20px" />
 				</Button>
 			</div>
-			<Dialog open={open} onClose={setOpen} className="flex md:hidden relative z-10">
+			<Dialog
+				open={open}
+				onClose={setOpen}
+				className="flex md:hidden relative z-10"
+			>
 				<DialogBackdrop
 					transition
 					className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity duration-500 ease-in-out data-[closed]:opacity-0"

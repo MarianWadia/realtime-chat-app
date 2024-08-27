@@ -5,7 +5,6 @@ import { notFound } from "next/navigation";
 import { FC } from "react";
 import { UserId } from "../../../../types/next-auth";
 import { User } from "@/../types/db";
-import { db } from "@/libs/db";
 import FriendRequests from "@/components/dashboard/requests/friendRequests";
 interface RequestsPage {}
 
@@ -19,7 +18,8 @@ const RequestsPage: FC<RequestsPage> = async ({}) => {
 
 	const incomingFriendRequests = await Promise.all(
 		incomingRequestsId.map(async (senderId) => {
-			const sender = (await db.get(`user:${senderId}`)) as User;
+			const senderRaw = (await fetchRedis('get', `user:${senderId}`)) as string;
+			const sender = JSON.parse(senderRaw) as User;
 			return {
 				id: senderId,
 				email: sender.email,
@@ -32,7 +32,7 @@ const RequestsPage: FC<RequestsPage> = async ({}) => {
 	return (
 		<main className="max-w-sm md:max-w-2xl 2xl:max-w-3xl">
 			<div className="mx-6 md:mx-12 my-32 md:my-24 flex flex-col">
-				<h1 className="text-4xl md:text-5xl font-extrabold text-gray-800">
+				<h1 className="text-4xl xl:text-5xl font-extrabold text-gray-800">
 					Friend Requests
 				</h1>
 				<FriendRequests
