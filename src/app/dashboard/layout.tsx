@@ -2,7 +2,10 @@ import FriendRequestsItem from "@/components/dashboard/layout/friendRequestsItem
 import LogoutButton from "@/components/dashboard/layout/logoutButton";
 import { fetchRedis } from "@/helpers/redis";
 import { authOptions } from "@/libs/auth";
-import { BotMessageSquare, UserPlus } from "lucide-react";
+import {
+	BotMessageSquare,
+	UserPlus,
+} from "lucide-react";
 import { getServerSession } from "next-auth";
 import Image from "next/image";
 import Link from "next/link";
@@ -37,16 +40,8 @@ export default async function Layout({ children }: LayoutProps) {
 	).length;
 	const friendsData = await getFriendsById(session.user.id);
 	return (
-		<div className="flex flex-row w-screen overflow-x-hidden h-screen overflow-y-hidden relative">
-			<div className="md:hidden">
-				<MobileChatLayout
-					friendsData={friendsData}
-					session={session}
-					friendRequests={friendRequests}
-					sidebarOptions={sidebarOptions}
-				/>
-			</div>
-			<div className="hidden md:flex w-full md:max-w-xs xl:max-w-sm grow h-full overflow-y-auto flex-col gap-y-6 px-4 py-4 border-r border-gray-400 bg-white">
+		<div className="flex flex-row w-full h-screen">
+			<div className="w-full max-w-sm grow h-full  overflow-y-auto flex flex-col gap-y-6 px-4 py-4 border-r border-gray-400 bg-white">
 				<Link href="/dashboard" className="shrink-0 px-2">
 					<BotMessageSquare color="#159e6e" size="40px" strokeWidth={2} />
 				</Link>
